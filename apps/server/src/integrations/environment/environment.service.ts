@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import ms, { StringValue } from 'ms';
+import { parseSearchLanguages } from '@docmost/db/search-languages';
 
 @Injectable()
 export class EnvironmentService {
@@ -412,6 +413,14 @@ export class EnvironmentService {
 
   getAllowedPrivateNetworks(): string {
     return this.getConfigValue('ALLOWED_PRIVATE_NETWORKS', 'none');
+  }
+
+  /**
+   * PostgreSQL text search configurations used for page search,
+   * e.g. SEARCH_LANGUAGES=german,english. Defaults to english.
+   */
+  getSearchLanguages(): string[] {
+    return parseSearchLanguages(this.getConfigValue('SEARCH_LANGUAGES'));
   }
 
   private getConfigValue(key: string, defaultValue?: string): string {

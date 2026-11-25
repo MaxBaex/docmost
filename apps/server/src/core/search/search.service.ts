@@ -52,7 +52,7 @@ export class SearchService {
         ? sql<number>`word_similarity(lower(${titleQuery}), lower(pages.title))`.as(
             'rank',
           )
-        : sql<number>`ts_rank(tsv, to_tsquery('english', f_unaccent(${searchQuery})))`.as(
+        : sql<number>`ts_rank(tsv, docmost_search_tsquery(${searchQuery}))`.as(
             'rank',
           );
 
@@ -73,7 +73,7 @@ export class SearchService {
         qb.where(
           'tsv',
           '@@',
-          sql<string>`to_tsquery('english', f_unaccent(${searchQuery}))`,
+          sql<string>`docmost_search_tsquery(${searchQuery})`,
         ),
       )
       .$if(!browseByFilters && titleOnly, (qb) =>
@@ -192,7 +192,7 @@ export class SearchService {
         .selectFrom('pages')
         .select([
           'id',
-          sql<string>`ts_headline('english', substring(text_content, 1, 100000), to_tsquery('english', f_unaccent(${searchQuery})),'MinWords=9, MaxWords=10, MaxFragments=3')`.as(
+          sql<string>`ts_headline(docmost_search_config(), substring(text_content, 1, 100000), docmost_search_tsquery(${searchQuery}),'MinWords=9, MaxWords=10, MaxFragments=3')`.as(
             'highlight',
           ),
         ])

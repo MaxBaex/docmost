@@ -54,4 +54,18 @@ describe('EnvironmentService', () => {
   it('treats a blank value without a default as unset', () => {
     expect(createService({ DRAWIO_URL: '' }).getDrawioUrl()).toBeUndefined();
   });
+
+  describe('getSearchLanguages', () => {
+    it('defaults to english', () => {
+      expect(createService({}).getSearchLanguages()).toEqual(['english']);
+    });
+
+    it('reads a comma-separated list', () => {
+      expect(
+        createService({
+          SEARCH_LANGUAGES: 'german, english',
+        }).getSearchLanguages(),
+      ).toEqual(['german', 'english']);
+    });
+  });
 });
